@@ -8,7 +8,7 @@ public class Response implements ServletResponse {
 
     private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
 
-    public static final String WEB_ROOT = Response.class.getResource("/").getPath() + File.separator + "webapp";
+    public static final String WEB_ROOT = Response.class.getResource("/").getPath() + File.separator;
 
     private static final int BUFFER_SIZE = 2048;
     Request request;
@@ -32,7 +32,7 @@ public class Response implements ServletResponse {
         FileInputStream fis = null;
 
         try {
-            File file = new File(WEB_ROOT, request.getUri());
+            File file = new File(WEB_ROOT + "webapp", request.getUri());
             fis = new FileInputStream(file);
 
             int ch = fis.read(bytes, 0, BUFFER_SIZE);

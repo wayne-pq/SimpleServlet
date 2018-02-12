@@ -19,10 +19,10 @@ public class ServletProcessor {
         try {
             URL[] urls = new URL[1];
             URLStreamHandler streamHandler = null;
-            File classPath = new File(Response.WEB_ROOT);
+            File classPath = new File(Response.WEB_ROOT + "servlet" + File.separator);
             String repository = (new URL("file", null, classPath.getCanonicalPath() + File.separator)).toString();
 
-            urls[0] = new URL(null, repository, streamHandler);
+            urls[0] = classPath.toURI().toURL();
 
             loader = new URLClassLoader(urls);
         } catch (Exception e) {
