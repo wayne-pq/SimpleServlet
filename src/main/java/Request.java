@@ -31,7 +31,7 @@ public class Request implements ServletRequest {
     }
 
 
-    private void parse() {
+    public void parse() {
         StringBuffer request = new StringBuffer(2048);
         int i;
         byte[] buffer = new byte[BUFFER_SIZE];

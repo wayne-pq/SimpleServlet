@@ -1,5 +1,3 @@
-import sun.misc.Request;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetAddress;
@@ -27,29 +25,41 @@ public class HttpServlet {
         }
 
         while (!shutdown) {
-            Socket socket = null;
-            InputStream input = null;
-            OutputStream output = null;
+            Socket socket;
+            InputStream input;
+            OutputStream output;
 
             try {
                 socket = serverSocket.accept();
                 input = socket.getInputStream();
                 output = socket.getOutputStream();
 
-//                Request request = new Request(output);
+                Request request = new Request(input);
+                request.parse();
 
+                Response response = new Response(output);
+                response.setRequest(request);
 
+                if (request.getUri().startsWith("/servlet/")) {
+                    ServletProcessor servletProcessor = new ServletProcessor();
+                    servletProcessor.process(request, response);
+                } else {
+                    StaticResourceProcessor staticResourceProcessor = new StaticResourceProcessor();
+                    staticResourceProcessor.process(request, response);
+                }
+
+                socket.close();
+
+                shutdown = request.getUri().equals(SHUTDOWN_COMMAND);
             } catch (Exception e) {
 
             }
 //            serverSocket.accept();
-
         }
-
-
     }
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        HttpServlet httpServlet = new HttpServlet();
+        httpServlet.await();
     }
 }

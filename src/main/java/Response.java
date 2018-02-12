@@ -8,7 +8,7 @@ public class Response implements ServletResponse {
 
     private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
 
-    public static final String WEB_ROOT = System.getProperty("user.dir") + File.separator + "webapp";
+    public static final String WEB_ROOT = Response.class.getResource("/").getPath() + File.separator + "webapp";
 
     private static final int BUFFER_SIZE = 2048;
     Request request;
@@ -41,7 +41,7 @@ public class Response implements ServletResponse {
                 ch = fis.read(bytes, 0, BUFFER_SIZE);
             }
         } catch (Exception e) {
-            String errorMsg = "error page";
+            String errorMsg = "404 NotFond!";
             outputStream.write(errorMsg.getBytes());
         } finally {
             if (fis != null) {
