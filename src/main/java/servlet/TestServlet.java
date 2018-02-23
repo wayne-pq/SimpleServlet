@@ -1,18 +1,35 @@
 package servlet;
 
-import javax.servlet.GenericServlet;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class TestServlet extends GenericServlet {
+public class TestServlet implements Servlet {
 
     @Override
-    public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException {
+    public void init(ServletConfig servletConfig) throws ServletException {
+        System.out.println("TestServlet init");
+    }
+
+    @Override
+    public ServletConfig getServletConfig() {
+        return null;
+    }
+
+    @Override
+    public void service(ServletRequest req, ServletResponse res) throws IOException {
+        System.out.println("TestServlet service ");
         PrintWriter writer = res.getWriter();
-        writer.write("hello , it is TestServlet");
-        writer.close();
+        writer.println("hello , it is TestServlet");
+    }
+
+    @Override
+    public String getServletInfo() {
+        return null;
+    }
+
+    @Override
+    public void destroy() {
+        System.out.println("TestServlet destroy");
     }
 }

@@ -1,5 +1,7 @@
 
 import javax.servlet.Servlet;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -32,7 +34,7 @@ public class ServletProcessor {
         Class myClass = null;
 
         try {
-            myClass = loader.loadClass(servletName);
+            myClass = loader.loadClass("servlet." + servletName);
         } catch (Exception e) {
             log.severe(e.toString());
         }
@@ -41,7 +43,7 @@ public class ServletProcessor {
 
         try {
             servlet = (Servlet) myClass.newInstance();
-            servlet.service(request, response);
+            servlet.service((ServletRequest)request, (ServletResponse) response);
         } catch (Exception e) {
             log.severe(e.toString());
         }

@@ -15,7 +15,6 @@ public class HttpServlet {
 
     private void await() {
         ServerSocket serverSocket = null;
-        int port = HttpServlet.port;
 
         try {
             serverSocket = new ServerSocket(HttpServlet.port, 1, InetAddress.getByName("127.0.0.1"));
