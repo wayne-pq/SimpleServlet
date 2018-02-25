@@ -33,10 +33,10 @@ public class HttpServlet {
                 input = socket.getInputStream();
                 output = socket.getOutputStream();
 
-                Request request = new Request(input);
+                RequestWrapper request = new RequestWrapper(new Request(input));
                 request.parse();
 
-                Response response = new Response(output);
+                ResponseWrapper response = new ResponseWrapper(new Response(output));
                 response.setRequest(request);
 
                 if (request.getUri().startsWith("/servlet/")) {

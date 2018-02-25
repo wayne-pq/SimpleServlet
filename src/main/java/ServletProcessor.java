@@ -12,7 +12,7 @@ public class ServletProcessor {
 
     private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
 
-    public void process(Request request, Response response) {
+    public void process(RequestWrapper request, ResponseWrapper response) {
         String uri = request.getUri();
         String servletName = uri.substring(uri.lastIndexOf("/") + 1);
 

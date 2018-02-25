@@ -11,7 +11,7 @@ public class Response implements ServletResponse {
     public static final String WEB_ROOT = Response.class.getResource("/").getPath() + File.separator;
 
     private static final int BUFFER_SIZE = 2048;
-    Request request;
+    RequestWrapper request;
     OutputStream outputStream;
     PrintWriter printWriter;
 
@@ -19,15 +19,15 @@ public class Response implements ServletResponse {
         this.outputStream = outputStream;
     }
 
-    public Request getRequest() {
+    protected RequestWrapper getRequest() {
         return request;
     }
 
-    public void setRequest(Request request) {
+    protected void setRequest(RequestWrapper request) {
         this.request = request;
     }
 
-    public void sendStaticResource() throws IOException {
+    protected void sendStaticResource() throws IOException {
         byte[] bytes = new byte[BUFFER_SIZE];
         FileInputStream fis = null;
 
