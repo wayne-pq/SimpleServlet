@@ -3,7 +3,7 @@
  */
 public class StaticResourceProcessor {
 
-    public void process(RequestWrapper request, ResponseWrapper response) {
+    public void process(Request request, Response response) {
         try {
             response.sendStaticResource();
         } catch (Exception e) {

@@ -12,7 +12,7 @@ public class ServletProcessor {
 
     private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
 
-    public void process(RequestWrapper request, ResponseWrapper response) {
+    public void process(Request request, Response response) {
         String uri = request.getUri();
         String servletName = uri.substring(uri.lastIndexOf("/") + 1);
 
@@ -43,7 +43,12 @@ public class ServletProcessor {
 
         try {
             servlet = (Servlet) myClass.newInstance();
-            servlet.service((ServletRequest)request, (ServletResponse) response);
+
+//            使用包装类，可以让Servlet开发者接触不到parseUri等方法
+            RequestWrapper requestWrapper = new RequestWrapper(request);
+            ResponseWrapper responseWrapper = new ResponseWrapper(response);
+
+            servlet.service(requestWrapper, responseWrapper);
         } catch (Exception e) {
             log.severe(e.toString());
         }

@@ -11,7 +11,7 @@ public class Response implements ServletResponse {
     public static final String WEB_ROOT = Response.class.getResource("/").getPath() + File.separator;
 
     private static final int BUFFER_SIZE = 2048;
-    RequestWrapper request;
+    Request request;
     OutputStream outputStream;
     PrintWriter printWriter;
 
@@ -19,15 +19,15 @@ public class Response implements ServletResponse {
         this.outputStream = outputStream;
     }
 
-    protected RequestWrapper getRequest() {
+    public Request getRequest() {
         return request;
     }
 
-    protected void setRequest(RequestWrapper request) {
+    public void setRequest(Request request) {
         this.request = request;
     }
 
-    protected void sendStaticResource() throws IOException {
+    public void sendStaticResource() throws IOException {
         byte[] bytes = new byte[BUFFER_SIZE];
         FileInputStream fis = null;
 
@@ -35,15 +35,25 @@ public class Response implements ServletResponse {
             File file = new File(WEB_ROOT + "webapp", request.getUri());
             fis = new FileInputStream(file);
 
+            outputStream.write(("HTTP/1.1 200 \r\n"
+                    + "Content-Type: text/html\r\n" + "\r\n"
+            ).getBytes());
+
             int ch = fis.read(bytes, 0, BUFFER_SIZE);
             while (ch != -1) {
                 outputStream.write(bytes, 0, ch);
                 ch = fis.read(bytes, 0, BUFFER_SIZE);
             }
+
+
         } catch (Exception e) {
-            String errorMsg = "404 NotFond!";
+            String errorMsg = "HTTP/1.1 404 File Not Found\r\n"
+                    + "Content-Type: text/html\r\n" + "Content-Length: 23\r\n"
+                    + "\r\n" + "<h1>File Not Found</h1>";
             outputStream.write(errorMsg.getBytes());
         } finally {
+            outputStream.flush();
+            outputStream.close();
             if (fis != null) {
                 fis.close();
             }
@@ -51,14 +61,17 @@ public class Response implements ServletResponse {
     }
 
 
+    @Override
     public String getCharacterEncoding() {
         return null;
     }
 
+    @Override
     public String getContentType() {
         return null;
     }
 
+    @Override
     public ServletOutputStream getOutputStream() throws IOException {
         return null;
     }
@@ -69,51 +82,64 @@ public class Response implements ServletResponse {
         return printWriter;
     }
 
-    public void setCharacterEncoding(String s) {
+    @Override
+    public void setCharacterEncoding(String charset) {
 
     }
 
-    public void setContentLength(int i) {
+    @Override
+    public void setContentLength(int len) {
 
     }
 
-    public void setContentLengthLong(long l) {
+    @Override
+    public void setContentLengthLong(long len) {
 
     }
 
-    public void setContentType(String s) {
+    @Override
+    public void setContentType(String type) {
 
     }
 
-    public void setBufferSize(int i) {
+    @Override
+    public void setBufferSize(int size) {
 
     }
 
+    @Override
     public int getBufferSize() {
         return 0;
     }
 
+    @Override
     public void flushBuffer() throws IOException {
 
     }
 
+    @Override
     public void resetBuffer() {
 
     }
 
+    @Override
     public boolean isCommitted() {
         return false;
     }
 
+    @Override
     public void reset() {
 
     }
 
-    public void setLocale(Locale locale) {
+    @Override
+    public void setLocale(Locale loc) {
 
     }
 
+    @Override
     public Locale getLocale() {
         return null;
     }
+
 }

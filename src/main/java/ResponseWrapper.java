@@ -16,25 +16,6 @@ public class ResponseWrapper implements ServletResponse {
         this.response = response;
     }
 
-    public RequestWrapper getRequest() {
-        return response.getRequest();
-    }
-
-    public void setRequest(RequestWrapper request) {
-        response.setRequest(request);
-    }
-
-    public Response getResponse() {
-        return response;
-    }
-
-    public void setResponse(Response response) {
-        this.response = response;
-    }
-
-    public void sendStaticResource() throws IOException {
-        response.sendStaticResource();
-    }
     @Override
     public String getCharacterEncoding() {
         return null;

@@ -19,30 +19,6 @@ public class RequestWrapper implements ServletRequest {
         this.request = request;
     }
 
-    public Request getRequest() {
-        return request;
-    }
-
-    public void setRequest(Request request) {
-        this.request = request;
-    }
-
-    public String getUri() {
-        return request.getUri();
-    }
-
-    public void setUri(String uri) {
-        request.setUri(uri);
-    }
-
-    public String parseUri(String requestUri) {
-        return request.parseUri(requestUri);
-    }
-
-    protected void parse() {
-        request.parse();
-    }
-
     @Override
     public Object getAttribute(String name) {
         return request.getAttribute(name);

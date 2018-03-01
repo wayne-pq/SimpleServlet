@@ -17,7 +17,7 @@ public class Request implements ServletRequest {
     private static final Logger log = Logger.getLogger(Request.class.getName());
 
 
-    protected String parseUri(String requestUri) {
+    public String parseUri(String requestUri) {
         int index1, index2;
 
         index1 = requestUri.indexOf(" ");
@@ -31,7 +31,7 @@ public class Request implements ServletRequest {
     }
 
 
-    protected void parse() {
+    public void parse() {
         StringBuffer request = new StringBuffer(2048);
         int i;
         byte[] buffer = new byte[BUFFER_SIZE];
@@ -53,11 +53,11 @@ public class Request implements ServletRequest {
         this.inputStream = inputStream;
     }
 
-    protected String getUri() {
+    public String getUri() {
         return uri;
     }
 
-    protected void setUri(String uri) {
+    public void setUri(String uri) {
         this.uri = uri;
     }
 

@@ -10,13 +10,6 @@
 
     <!-- https://mvnrepository.com/artifact/javax/javaee-api -->
     <dependencies>
-        <!--<dependency>-->
-            <!--<groupId>javax</groupId>-->
-            <!--<artifactId>javaee-api</artifactId>-->
-            <!--<version>7.0</version>-->
-            <!--<scope>compile</scope>-->
-        <!--</dependency>-->
-        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>

@@ -3,6 +3,7 @@ import java.io.OutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 public class HttpServlet {
@@ -23,20 +24,25 @@ public class HttpServlet {
             System.exit(1);
         }
 
-        while (!shutdown) {
+        while (true) {
             Socket socket;
             InputStream input;
             OutputStream output;
 
             try {
+                System.out.println("等待指令。。。。" + LocalDateTime.now().toString());
                 socket = serverSocket.accept();
                 input = socket.getInputStream();
                 output = socket.getOutputStream();
 
-                RequestWrapper request = new RequestWrapper(new Request(input));
+                Request request = new Request(input);
                 request.parse();
+                Response response = new Response(output);
 
-                ResponseWrapper response = new ResponseWrapper(new Response(output));
+                if (SHUTDOWN_COMMAND.equals(request.getUri())) {
+                    break;
+                }
+
                 response.setRequest(request);
 
                 if (request.getUri().startsWith("/servlet/")) {
@@ -49,16 +55,16 @@ public class HttpServlet {
 
                 socket.close();
 
-                shutdown = request.getUri().equals(SHUTDOWN_COMMAND);
+//                shutdown = request.getUri().equals(SHUTDOWN_COMMAND);
             } catch (Exception e) {
 
             }
-//            serverSocket.accept();
         }
     }
 
     public static void main(String[] args) {
         HttpServlet httpServlet = new HttpServlet();
+        System.out.println("servlet容器启动成功");
         httpServlet.await();
     }
 }
