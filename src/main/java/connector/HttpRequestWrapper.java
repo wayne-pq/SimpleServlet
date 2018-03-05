@@ -1,47 +1,51 @@
+package connector;
 
 import javax.servlet.*;
+import javax.servlet.http.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.security.Principal;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.Map;
 
-public class RequestWrapper implements ServletRequest {
+public class HttpRequestWrapper implements HttpServletRequest {
 
-    private Request request;
+    private HttpRequest request;
 
 
-    public RequestWrapper(Request request) {
+    public HttpRequestWrapper(HttpRequest request) {
         if (request == null) {
             throw new IllegalArgumentException("Request cannot be null");
         }
         this.request = request;
     }
 
-    public Request getRequest() {
+    public HttpRequest getRequest() {
         return request;
     }
 
-    public void setRequest(Request request) {
+    public void setRequest(HttpRequest request) {
         this.request = request;
     }
 
-    public String getUri() {
-        return request.getUri();
-    }
-
-    public void setUri(String uri) {
-        request.setUri(uri);
-    }
-
-    public String parseUri(String requestUri) {
-        return request.parseUri(requestUri);
-    }
-
-    protected void parse() {
-        request.parse();
-    }
+//    public String getUri() {
+//        return request.getUri();
+//    }
+//
+//    public void setUri(String uri) {
+//        request.setUri(uri);
+//    }
+//
+//    public String parseUri(String requestUri) {
+//        return request.parseUri(requestUri);
+//    }
+//
+//    protected void parse() {
+//        request.parse();
+//    }
 
     @Override
     public Object getAttribute(String name) {
@@ -225,6 +229,166 @@ public class RequestWrapper implements ServletRequest {
 
     @Override
     public DispatcherType getDispatcherType() {
+        return null;
+    }
+
+    @Override
+    public String getAuthType() {
+        return null;
+    }
+
+    @Override
+    public Cookie[] getCookies() {
+        return new Cookie[0];
+    }
+
+    @Override
+    public long getDateHeader(String name) {
+        return 0;
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return null;
+    }
+
+    @Override
+    public Enumeration<String> getHeaders(String name) {
+        return null;
+    }
+
+    @Override
+    public Enumeration<String> getHeaderNames() {
+        return null;
+    }
+
+    @Override
+    public int getIntHeader(String name) {
+        return 0;
+    }
+
+    @Override
+    public String getMethod() {
+        return null;
+    }
+
+    @Override
+    public String getPathInfo() {
+        return null;
+    }
+
+    @Override
+    public String getPathTranslated() {
+        return null;
+    }
+
+    @Override
+    public String getContextPath() {
+        return null;
+    }
+
+    @Override
+    public String getQueryString() {
+        return null;
+    }
+
+    @Override
+    public String getRemoteUser() {
+        return null;
+    }
+
+    @Override
+    public boolean isUserInRole(String role) {
+        return false;
+    }
+
+    @Override
+    public Principal getUserPrincipal() {
+        return null;
+    }
+
+    @Override
+    public String getRequestedSessionId() {
+        return null;
+    }
+
+    @Override
+    public String getRequestURI() {
+        return null;
+    }
+
+    @Override
+    public StringBuffer getRequestURL() {
+        return null;
+    }
+
+    @Override
+    public String getServletPath() {
+        return null;
+    }
+
+    @Override
+    public HttpSession getSession(boolean create) {
+        return null;
+    }
+
+    @Override
+    public HttpSession getSession() {
+        return null;
+    }
+
+    @Override
+    public String changeSessionId() {
+        return null;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdValid() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromCookie() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromURL() {
+        return false;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromUrl() {
+        return false;
+    }
+
+    @Override
+    public boolean authenticate(HttpServletResponse response) throws IOException, ServletException {
+        return false;
+    }
+
+    @Override
+    public void login(String username, String password) throws ServletException {
+
+    }
+
+    @Override
+    public void logout() throws ServletException {
+
+    }
+
+    @Override
+    public Collection<Part> getParts() throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
+    public Part getPart(String name) throws IOException, ServletException {
+        return null;
+    }
+
+    @Override
+    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
         return null;
     }
 }

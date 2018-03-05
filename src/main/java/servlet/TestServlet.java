@@ -20,7 +20,8 @@ public class TestServlet implements Servlet {
     public void service(ServletRequest req, ServletResponse res) throws IOException {
         System.out.println("TestServlet service ");
         PrintWriter writer = res.getWriter();
-        writer.println("hello , it is TestServlet");
+        writer.println("HTTP/1.1 200 \r\n"
+                + "Content-Type: text/html\r\n" + "\r\n" + "hello , it is TestServlet");
     }
 
     @Override

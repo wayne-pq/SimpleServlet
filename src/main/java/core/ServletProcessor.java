@@ -1,7 +1,11 @@
+package core;
+
+import connector.HttpRequest;
+import connector.HttpRequestWrapper;
+import connector.HttpResponse;
+import connector.HttpResponseWrapper;
 
 import javax.servlet.Servlet;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,10 +14,10 @@ import java.util.logging.Logger;
 
 public class ServletProcessor {
 
-    private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
+    private static final Logger log = Logger.getLogger(ServletProcessor.class.getName());
 
-    public void process(RequestWrapper request, ResponseWrapper response) {
-        String uri = request.getUri();
+    public void process(HttpRequest request, HttpResponse response) {
+        String uri = request.getRequestURI();
         String servletName = uri.substring(uri.lastIndexOf("/") + 1);
 
         URLClassLoader loader = null;
@@ -21,7 +25,7 @@ public class ServletProcessor {
         try {
             URL[] urls = new URL[1];
             URLStreamHandler streamHandler = null;
-            File classPath = new File(Response.WEB_ROOT + "servlet" + File.separator);
+            File classPath = new File(HttpResponse.WEB_ROOT + "servlet" + File.separator);
             String repository = (new URL("file", null, classPath.getCanonicalPath() + File.separator)).toString();
 
             urls[0] = classPath.toURI().toURL();
@@ -43,7 +47,10 @@ public class ServletProcessor {
 
         try {
             servlet = (Servlet) myClass.newInstance();
-            servlet.service((ServletRequest)request, (ServletResponse) response);
+
+            HttpRequestWrapper requestWrapper  = new HttpRequestWrapper(request);
+            HttpResponseWrapper responseWrapper = new HttpResponseWrapper(response);
+            servlet.service(requestWrapper, responseWrapper);
         } catch (Exception e) {
             log.severe(e.toString());
         }
