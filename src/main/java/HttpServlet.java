@@ -10,7 +10,8 @@ public class HttpServlet {
 
     private static final Logger log = Logger.getLogger(HttpServlet.class.getName());
 
-    private static final int port = 8080;
+//    请求接口
+    private static final int port = 8088;
     private static final String SHUTDOWN_COMMAND = "/SHUTDOWN";
     private boolean shutdown = false;
 
@@ -31,6 +32,7 @@ public class HttpServlet {
 
             try {
                 System.out.println("等待指令。。。。" + LocalDateTime.now().toString());
+//                从 socket拿到InputStream 和 OutputStream 并封装成 Request 和 Response
                 socket = serverSocket.accept();
                 input = socket.getInputStream();
                 output = socket.getOutputStream();
@@ -45,6 +47,7 @@ public class HttpServlet {
 
                 response.setRequest(request);
 
+//              根据url 分发任务给 servlet处理器（ServletProcessor） 或者 静态页面处理器 （StaticResourceProcessor）
                 if (request.getUri().startsWith("/servlet/")) {
                     ServletProcessor servletProcessor = new ServletProcessor();
                     servletProcessor.process(request, response);
@@ -52,10 +55,7 @@ public class HttpServlet {
                     StaticResourceProcessor staticResourceProcessor = new StaticResourceProcessor();
                     staticResourceProcessor.process(request, response);
                 }
-
                 socket.close();
-
-//                shutdown = request.getUri().equals(SHUTDOWN_COMMAND);
             } catch (Exception e) {
 
             }

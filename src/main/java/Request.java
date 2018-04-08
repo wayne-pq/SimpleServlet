@@ -16,7 +16,9 @@ public class Request implements ServletRequest {
 
     private static final Logger log = Logger.getLogger(Request.class.getName());
 
-
+    /**
+     * 解析请求url
+     */
     public String parseUri(String requestUri) {
         int index1, index2;
 
@@ -30,7 +32,9 @@ public class Request implements ServletRequest {
         return null;
     }
 
-
+    /**
+     * 读取inputStream
+     */
     public void parse() {
         StringBuffer request = new StringBuffer(2048);
         int i;
