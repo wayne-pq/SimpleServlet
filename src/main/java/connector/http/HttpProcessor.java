@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Logger;
 
-public class HttpProcessor {
+public class HttpProcessor implements Runnable {
 
     private static final Logger log = Logger.getLogger(HttpProcessor.class.getName());
 
@@ -21,6 +21,37 @@ public class HttpProcessor {
     private HttpRequest request = null;
 
     private HttpResponse response = null;
+
+    public HttpProcessor(HttpConnector connector) {
+        this.connector = connector;
+    }
+
+    /**
+     * The shutdown signal to our background thread
+     */
+    private boolean stopped = false;
+
+    /**
+     * Is there a new socket available?
+     */
+    private boolean available = false;
+
+    /**
+     * The socket we are currently processing a request for.  This object
+     * is used for inter-thread communication only.
+     */
+    private Socket socket = null;
+
+    /**
+     * The HttpConnector with which this processor is associated.
+     */
+    private HttpConnector connector = null;
+
+    /**
+     * The thread synchronization object.
+     */
+    private Object threadSync = new Object();
+
 
     public static final String SESSION_PARAMETER_NAME = "jsessionid";
 
@@ -31,7 +62,37 @@ public class HttpProcessor {
     private static final String match =
             ";" + SESSION_PARAMETER_NAME + "=";
 
+    /**
+     * The background thread that listens for incoming TCP/IP connections and
+     * hands them off to an appropriate processor.
+     */
+    @Override
+    public void run() {
+
+        // Process requests until we receive a shutdown signal
+        while (true) {
+
+            // Wait for the next socket to be assigned
+            Socket socket = await();
+            if (socket == null) {
+                continue;
+            }
+
+            // Process the request from this socket
+            try {
+                process(socket);
+                socket.close();
+            } catch (Throwable t) {
+                throw new RuntimeException(t);
+            }
+            // Finish up this request
+            connector.recycle(this);
+        }
+    }
+
+
     public void process(Socket socket) {
+        log.info(Thread.currentThread().getName() + " 处理请求");
         SocketInputStream input = null;
         OutputStream output = null;
         try {
@@ -235,5 +296,53 @@ public class HttpProcessor {
         // Return the normalized path that we have completed
         return (normalized);
 
+    }
+
+
+    /**
+     * Await a newly assigned Socket from our Connector, or <code>null</code>
+     * if we are supposed to shut down.
+     */
+    private synchronized Socket await() {
+
+        // Wait for the Connector to provide a new Socket
+        while (!available) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+
+        // Notify the Connector that we have received this Socket
+        Socket socket = this.socket;
+        available = false;
+        notifyAll();
+
+        return socket;
+    }
+
+
+    /**
+     * Process an incoming TCP/IP connection on the specified socket.  Any
+     * exception that occurs during processing must be logged and swallowed.
+     * <b>NOTE</b>:  This method is called from our Connector's thread.  We
+     * must assign it to our own thread so that multiple simultaneous
+     * requests can be handled.
+     *
+     * @param socket TCP socket to process
+     */
+    synchronized void assign(Socket socket) {
+        // Wait for the Processor to get the previous Socket
+        while (available) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+            }
+        }
+
+        // Store the newly available Socket and notify our thread
+        this.socket = socket;
+        available = true;
+        notifyAll();
     }
 }
