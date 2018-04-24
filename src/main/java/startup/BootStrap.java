@@ -2,14 +2,12 @@ package startup;
 
 import connector.http.HttpConnector;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.IOException;
 
 public class BootStrap {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         HttpConnector httpConnector = new HttpConnector();
-
-        Thread thread = new Thread(httpConnector);
-        thread.run();
+        httpConnector.initialize();
+        httpConnector.start();
     }
 }

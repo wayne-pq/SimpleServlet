@@ -7,7 +7,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.time.LocalDateTime;
-import java.util.Stack;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.logging.Logger;
 
@@ -22,16 +21,21 @@ public class HttpConnector implements Runnable {
 
     private static final String SHUTDOWN_COMMAND = "/SHUTDOWN";
 
+    ServerSocket serverSocket = null;
+    /**
+     * The background thread.
+     */
+    private Thread thread = null;
     /**
      * The minimum number of processors to start at initialization time.
      */
-    protected int minProcessors = 100;
+    protected int minProcessors = 5;
 
 
     /**
      * The maximum number of processors allowed, or <0 for unlimited.
      */
-    private int maxProcessors = 200;
+    private int maxProcessors = 15;
 
     /**
      * The current number of processors that have been created.
@@ -54,26 +58,10 @@ public class HttpConnector implements Runnable {
     }
 
     public HttpConnector() {
-        // Create the specified minimum number of processors
-        while (curProcessors < minProcessors) {
-            if ((maxProcessors > 0) && (curProcessors >= maxProcessors)) {
-                break;
-            }
-            HttpProcessor processor = newProcessor();
-            recycle(processor);
-        }
     }
 
     @Override
     public void run() {
-        ServerSocket serverSocket = null;
-
-        try {
-            serverSocket = new ServerSocket(port, 1, InetAddress.getByName("localhost"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
 
         while (true) {
 
@@ -91,8 +79,8 @@ public class HttpConnector implements Runnable {
                         log.info("线程池已空，忽略请求");
                         socket.close();
                     } catch (IOException e) {
+                        continue;
                     }
-                    continue;
                 }
                 httpProcessor.assign(socket);
             } catch (Exception e) {
@@ -144,5 +132,45 @@ public class HttpConnector implements Runnable {
                 return null;
             }
         }
+    }
+
+
+    /**
+     * Initialize this connector (create ServerSocket here!)
+     */
+    public void initialize() throws IOException {
+        serverSocket = new ServerSocket(port, 1, InetAddress.getByName("localhost"));
+    }
+
+    /**
+     * Begin processing requests via this Connector.
+     *
+     * @throws LifecycleException if a fatal startup error occurs
+     */
+    public void start() {
+
+        // Start our background thread
+        threadStart();
+
+        // Create the specified minimum number of processors
+        while (curProcessors < minProcessors) {
+            if ((maxProcessors > 0) && (curProcessors >= maxProcessors))
+                break;
+            HttpProcessor processor = newProcessor();
+            recycle(processor);
+        }
+
+    }
+
+
+    /**
+     * Start the background processing thread.
+     */
+    private void threadStart() {
+        log.info("httpConnector.starting");
+
+        thread = new Thread(this, "SimpleServlet v1.6");
+        thread.setDaemon(true);
+        thread.start();
     }
 }
